@@ -4,6 +4,7 @@
   "description": "Node.js API/service for raffle bot web application UI",
   "main": "index.js",
   "scripts": {
+    "start": "node ./createServer",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
