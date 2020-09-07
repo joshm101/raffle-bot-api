@@ -1,0 +1,10 @@
+{
+  "extends": [
+    "alloy",
+    "alloy/typescript"
+  ],
+  "env": {
+    "node": true,
+    "jest": true
+  }
+}
