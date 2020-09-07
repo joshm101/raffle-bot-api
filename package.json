@@ -4,8 +4,9 @@
   "description": "Node.js API/service for raffle bot web application UI",
   "main": "createServer.ts",
   "scripts": {
-    "start": "ts-node ./createServer",
-    "test": "jest"
+    "start:dev": "cross-env NODE_ENV=dev ts-node ./createServer",
+    "start:prod": "cross-env NODE_ENV=production ts-node ./createServer",
+    "test": "cross-env NODE_ENV=test jest"
   },
   "repository": {
     "type": "git",
@@ -27,6 +28,7 @@
     "@types/node": "14.6.4",
     "@typescript-eslint/eslint-plugin": "4.0.1",
     "@typescript-eslint/parser": "4.0.1",
+    "cross-env": "7.0.2",
     "eslint": "7.8.1",
     "eslint-config-alloy": "3.8.0",
     "jest": "26.4.2",
