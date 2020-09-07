@@ -1,0 +1,23 @@
+{
+  "name": "raffle-bot-api",
+  "version": "1.0.0",
+  "description": "Node.js API/service for raffle bot web application UI",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joshm101/raffle-bot-api.git"
+  },
+  "author": "Joshua Mora (jshm101@gmail.com)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joshm101/raffle-bot-api/issues"
+  },
+  "homepage": "https://github.com/joshm101/raffle-bot-api#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.10.3"
+  }
+}
