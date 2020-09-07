@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/joshm101/raffle-bot-api#readme",
   "dependencies": {
-    "express": "^4.17.1",
-    "mongoose": "^5.10.3"
+    "express": "4.17.1",
+    "mongoose": "5.10.3"
   }
 }
