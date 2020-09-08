@@ -1,12 +1,12 @@
 import mockingoose from 'mockingoose';
-
-import setProxies, { ProxiesUpdateError } from './setProxies';
+import setEmailGroups, {
+  MalformedDataError,
+  EmailGroupsUpdateError
+} from './setEmailGroups';
 
 import { UserModel } from '../../models';
 
-// mocking "findOne" below corresponds to mocking "findById"
-
-describe('setProxies', () => {
+describe('setEmailGroups', () => {
   afterEach(() => {
     mockingoose.resetAll();
   });
@@ -19,7 +19,13 @@ describe('setProxies', () => {
     settings: { captchaAPIs: [] }
   };
 
-  it('throws correct error when proxies data cannot be written to DB', () => {
+  it('throws correct error when any of email groups are malformed', () => {
+    expect(() =>
+      setEmailGroups('mock-uid', [{ name: '', data: [] }])
+    ).toThrow(MalformedDataError);
+  });
+
+  it('throws correct error when email groups data cannot be written to DB', () => {
     const findByIdMock = () => mockUserQueryResult;
 
     mockingoose(UserModel).toReturn(findByIdMock, 'findOne');
@@ -27,9 +33,10 @@ describe('setProxies', () => {
       () => Promise.reject(new Error('Write error')),
       'save'
     );
-    return expect(() => setProxies('mock-id', [])).rejects.toThrow(
-      ProxiesUpdateError
-    );
+
+    return expect(() =>
+      setEmailGroups('mock-id', [])
+    ).rejects.toThrow(EmailGroupsUpdateError);
   });
 
   it('throws correct error when user query result is null', () => {
@@ -37,9 +44,9 @@ describe('setProxies', () => {
     const findByIdMock = () => mockUserQueryResult;
 
     mockingoose(UserModel).toReturn(findByIdMock, 'findOne');
-    return expect(() => setProxies('mock-id', [])).rejects.toThrow(
-      ProxiesUpdateError
-    );
+    return expect(() =>
+      setEmailGroups('mock-id', [])
+    ).rejects.toThrow(EmailGroupsUpdateError);
   });
 
   it('resolves on write success', () => {
@@ -54,6 +61,8 @@ describe('setProxies', () => {
       'save'
     );
 
-    return expect(setProxies('mock-id', [])).resolves.toBeTruthy();
+    return expect(
+      setEmailGroups('mock-id', [])
+    ).resolves.toBeTruthy();
   });
 });
