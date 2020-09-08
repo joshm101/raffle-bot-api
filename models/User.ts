@@ -99,3 +99,4 @@ class User {
 const UserModel = getModelForClass(User);
 
 export default UserModel;
+export { User };
