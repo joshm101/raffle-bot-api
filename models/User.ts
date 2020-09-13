@@ -30,6 +30,9 @@ class ProfileShippingInfo {
 
 class Profile {
   @prop({ required: true })
+  public id!: string;
+
+  @prop({ required: true })
   public generalInfo!: ProfileGeneralInfo;
 
   @prop({ required: true })
