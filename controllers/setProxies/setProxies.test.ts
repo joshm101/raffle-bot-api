@@ -3,6 +3,7 @@ import mockingoose from 'mockingoose';
 import setProxies, { ProxiesUpdateError } from './setProxies';
 
 import { UserModel } from '../../models';
+import { mockUserQueryResult } from '../utils.mocks';
 
 // mocking "findOne" below corresponds to mocking "findById"
 
@@ -10,14 +11,6 @@ describe('setProxies', () => {
   afterEach(() => {
     mockingoose.resetAll();
   });
-
-  const mockUserQueryResult = {
-    firstName: 'foo',
-    lastName: 'bar',
-    profiles: [],
-    proxies: { data: [] },
-    settings: { captchaAPIs: [] }
-  };
 
   it('throws correct error when proxies data cannot be written to DB', () => {
     const findByIdMock = () => mockUserQueryResult;

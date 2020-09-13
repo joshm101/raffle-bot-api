@@ -5,19 +5,12 @@ import setEmailGroups, {
 } from './setEmailGroups';
 
 import { UserModel } from '../../models';
+import { mockUserQueryResult } from '../utils.mocks';
 
 describe('setEmailGroups', () => {
   afterEach(() => {
     mockingoose.resetAll();
   });
-
-  const mockUserQueryResult = {
-    firstName: 'foo',
-    lastName: 'bar',
-    profiles: [],
-    proxies: { data: [] },
-    settings: { captchaAPIs: [] }
-  };
 
   it('throws correct error when any of email groups are malformed', () => {
     expect(() =>
