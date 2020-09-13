@@ -86,7 +86,7 @@ class User {
   @prop({ required: true })
   public lastName!: string;
 
-  @prop({ required: true })
+  @prop({ required: true, type: Profile })
   public profiles!: Profile[];
 
   @prop()
