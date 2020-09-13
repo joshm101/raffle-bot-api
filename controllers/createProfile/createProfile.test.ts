@@ -9,6 +9,7 @@ describe('createProfile', () => {
   });
 
   const mockProfileInput: Profile = {
+    id: 'mock-id',
     generalInfo: {
       name: 'test-profile-name',
       firstName: 'Circus',
