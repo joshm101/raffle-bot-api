@@ -1,1 +1,6 @@
-export { default as UserModel, User, EmailGroup } from './User';
+export {
+  default as UserModel,
+  User,
+  EmailGroup,
+  Profile
+} from './User';
