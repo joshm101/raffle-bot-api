@@ -2,5 +2,6 @@ export {
   default as UserModel,
   User,
   EmailGroup,
-  Profile
+  Profile,
+  Settings
 } from './User';

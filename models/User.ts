@@ -1,5 +1,7 @@
 import { prop, getModelForClass } from '@typegoose/typegoose';
 
+import { CAPTCHA_APIs } from '../constants';
+
 class ProfileGeneralInfo {
   @prop({ required: true })
   public name!: string;
@@ -73,7 +75,9 @@ class Settings {
   public discordWebhook?: string;
 
   @prop()
-  public captchaAPIs: CaptchaAPI[] = [];
+  public captchaAPIs: CaptchaAPI[] = [
+    { type: CAPTCHA_APIs.TWO_CAPTCHA, apiKey: '' }
+  ];
 
   @prop()
   public customDelays: CustomDelays = { maxDelay: 77, minDelay: 7 };
@@ -102,4 +106,4 @@ class User {
 const UserModel = getModelForClass(User);
 
 export default UserModel;
-export { User, EmailGroup, Profile };
+export { User, EmailGroup, Profile, Settings };
