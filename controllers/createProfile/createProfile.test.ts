@@ -1,7 +1,7 @@
 import mockingoose from 'mockingoose';
 import createProfile, { ProfileCreationError } from './createProfile';
 import { UserModel, Profile } from '../../models';
-import { mockUserQueryResult } from '../utils.mocks';
+import { getMockUser } from '../utils.mocks';
 
 describe('createProfile', () => {
   afterEach(() => {
@@ -23,34 +23,20 @@ describe('createProfile', () => {
     }
   };
 
-  it('throws correct error when user query result is null', () => {
-    const mockUserQueryResult = null;
-    const findByIdMock = () => mockUserQueryResult;
-
-    mockingoose(UserModel).toReturn(findByIdMock, 'findOne');
-    return expect(() =>
-      createProfile('mock-id', mockProfileInput)
-    ).rejects.toThrow(ProfileCreationError);
-  });
-
-  it('throws correct error when profile input cannot be written to DB', () => {
-    const findByIdMock = () => mockUserQueryResult;
-
-    mockingoose(UserModel).toReturn(findByIdMock, 'findOne');
+  it('throws correct error when profile input cannot be written to DB', async () => {
+    const mockUser = await getMockUser();
     mockingoose(UserModel).toReturn(
       () => Promise.reject(new Error('Write error')),
       'save'
     );
 
     return expect(() =>
-      createProfile('mock-id', mockProfileInput)
+      createProfile(mockUser!, mockProfileInput)
     ).rejects.toThrow(ProfileCreationError);
   });
 
-  it('resolves on profile creation success', () => {
-    const findByIdMock = () => mockUserQueryResult;
-
-    mockingoose(UserModel).toReturn(findByIdMock, 'findOne');
+  it('resolves on profile creation success', async () => {
+    const mockUser = await getMockUser();
     mockingoose(UserModel).toReturn(
       () =>
         new Promise((resolve) => {
@@ -60,7 +46,7 @@ describe('createProfile', () => {
     );
 
     return expect(
-      createProfile('mock-id', mockProfileInput)
+      createProfile(mockUser!, mockProfileInput)
     ).resolves.toBeTruthy();
   });
 });

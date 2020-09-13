@@ -9,26 +9,20 @@ class ProfileCreationError extends Error {
   }
 }
 
-const createProfile = (uid: string, profileInput: Profile) => {
-  const saveProfile = (user: DocumentType<User> | null) => {
-    if (!user) {
-      const errorMessage = 'User is null.';
-      throw new ProfileCreationError(errorMessage);
-    }
-
-    const profileCreationError = () => {
-      const errorMessage = 'Write error while creating profile.';
-      throw new ProfileCreationError(errorMessage);
-    };
-
-    const userProfiles = user.profiles;
-    const updatedProfiles = [...userProfiles, profileInput];
-    user.profiles = updatedProfiles;
-
-    return user.save().catch(profileCreationError);
+const createProfile = (
+  user: DocumentType<User>,
+  profileInput: Profile
+) => {
+  const profileCreationError = () => {
+    const errorMessage = 'Write error while creating profile.';
+    throw new ProfileCreationError(errorMessage);
   };
 
-  return getUser(uid).then(saveProfile);
+  const userProfiles = user.profiles;
+  const updatedProfiles = [...userProfiles, profileInput];
+  user.profiles = updatedProfiles;
+
+  return user.save().catch(profileCreationError);
 };
 
 export default createProfile;
