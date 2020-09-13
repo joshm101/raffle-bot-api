@@ -5,47 +5,37 @@ import setEmailGroups, {
 } from './setEmailGroups';
 
 import { UserModel } from '../../models';
-import { mockUserQueryResult } from '../utils.mocks';
+import { getMockUser } from '../utils.mocks';
 
 describe('setEmailGroups', () => {
   afterEach(() => {
     mockingoose.resetAll();
   });
 
-  it('throws correct error when any of email groups are malformed', () => {
+  it('throws correct error when any of email groups are malformed', async () => {
+    const mockUser = await getMockUser();
+
     expect(() =>
-      setEmailGroups('mock-uid', [{ name: '', data: [] }])
+      setEmailGroups(mockUser!, [{ name: '', data: [] }])
     ).toThrow(MalformedDataError);
   });
 
-  it('throws correct error when email groups data cannot be written to DB', () => {
-    const findByIdMock = () => mockUserQueryResult;
+  it('throws correct error when email groups data cannot be written to DB', async () => {
+    const mockUser = await getMockUser();
 
-    mockingoose(UserModel).toReturn(findByIdMock, 'findOne');
     mockingoose(UserModel).toReturn(
       () => Promise.reject(new Error('Write error')),
       'save'
     );
 
     return expect(() =>
-      setEmailGroups('mock-id', [])
+      setEmailGroups(mockUser!, [])
     ).rejects.toThrow(EmailGroupsUpdateError);
   });
 
-  it('throws correct error when user query result is null', () => {
-    const mockUserQueryResult = null;
-    const findByIdMock = () => mockUserQueryResult;
+  it('resolves on write success', async () => {
+    const mockUser = await getMockUser();
 
-    mockingoose(UserModel).toReturn(findByIdMock, 'findOne');
-    return expect(() =>
-      setEmailGroups('mock-id', [])
-    ).rejects.toThrow(EmailGroupsUpdateError);
-  });
-
-  it('resolves on write success', () => {
-    const findByIdMock = () => mockUserQueryResult;
-
-    mockingoose(UserModel).toReturn(findByIdMock, 'findOne');
     mockingoose(UserModel).toReturn(
       () =>
         new Promise((resolve) => {
@@ -55,7 +45,7 @@ describe('setEmailGroups', () => {
     );
 
     return expect(
-      setEmailGroups('mock-id', [])
+      setEmailGroups(mockUser!, [])
     ).resolves.toBeTruthy();
   });
 });

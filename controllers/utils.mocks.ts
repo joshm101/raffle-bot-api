@@ -1,3 +1,6 @@
+import mockingoose from 'mockingoose';
+import { UserModel } from '../models';
+
 const mockUserQueryResult = {
   firstName: 'foo',
   lastName: 'bar',
@@ -6,4 +9,12 @@ const mockUserQueryResult = {
   settings: { captchaAPIs: [] }
 };
 
-export { mockUserQueryResult };
+const getMockUser = async () => {
+  const findByIdMock = () => mockUserQueryResult;
+  mockingoose(UserModel).toReturn(findByIdMock, 'findOne');
+  const mockUser = await UserModel.findOne().exec();
+
+  return mockUser;
+};
+
+export { getMockUser };

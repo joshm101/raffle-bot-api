@@ -16,7 +16,10 @@ class EmailGroupsUpdateError extends Error {
   }
 }
 
-const setEmailGroups = (uid: string, emailGroups: EmailGroup[]) => {
+const setEmailGroups = (
+  user: DocumentType<User>,
+  emailGroups: EmailGroup[]
+) => {
   const validateEmailGroups = () => {
     const invalidEmailGroup = (emailGroup: EmailGroup) => {
       if (!emailGroup.name.length) {
@@ -36,23 +39,14 @@ const setEmailGroups = (uid: string, emailGroups: EmailGroup[]) => {
 
   validateEmailGroups();
 
-  const updateEmailGroups = (user: DocumentType<User> | null) => {
-    if (!user) {
-      const errorMessage = 'User is null.';
-      throw new EmailGroupsUpdateError(errorMessage);
-    }
-
-    const emailGroupsUpdateError = () => {
-      const errorMessage =
-        'Write error while updating email groups data.';
-      throw new EmailGroupsUpdateError(errorMessage);
-    };
-
-    user.emailGroups = emailGroups;
-    return user.save().catch(emailGroupsUpdateError);
+  const emailGroupsUpdateError = () => {
+    const errorMessage =
+      'Write error while updating email groups data.';
+    throw new EmailGroupsUpdateError(errorMessage);
   };
 
-  return getUser(uid).then(updateEmailGroups);
+  user.emailGroups = emailGroups;
+  return user.save().catch(emailGroupsUpdateError);
 };
 
 export default setEmailGroups;

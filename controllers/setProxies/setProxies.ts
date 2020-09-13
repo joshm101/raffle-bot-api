@@ -1,6 +1,5 @@
 import { DocumentType } from '@typegoose/typegoose';
 import { User } from '../../models';
-import { getUser } from '../utils';
 
 class ProxiesUpdateError extends Error {
   public constructor(message: string) {
@@ -9,23 +8,14 @@ class ProxiesUpdateError extends Error {
   }
 }
 
-const setProxies = (uid: string, proxies: string[]) => {
-  const updateProxies = (user: DocumentType<User> | null) => {
-    if (!user) {
-      const errorMessage = 'User is null.';
-      throw new ProxiesUpdateError(errorMessage);
-    }
-
-    const proxiesUpdateError = (error: any) => {
-      const errorMessage = 'Write error while updating proxies data.';
-      throw new ProxiesUpdateError(errorMessage);
-    };
-
-    user.proxies = { data: proxies };
-    return user.save().catch(proxiesUpdateError);
+const setProxies = (user: DocumentType<User>, proxies: string[]) => {
+  const proxiesUpdateError = (error: any) => {
+    const errorMessage = 'Write error while updating proxies data.';
+    throw new ProxiesUpdateError(errorMessage);
   };
 
-  return getUser(uid).then(updateProxies);
+  user.proxies = { data: proxies };
+  return user.save().catch(proxiesUpdateError);
 };
 
 export default setProxies;
