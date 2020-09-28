@@ -1,7 +1,9 @@
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import {
   SOLVE_REQUEST_URL,
-  CAPTCHA_SOLVE_REQUEST_ERRORS
+  CAPTCHA_SOLVE_REQUEST_ERRORS,
+  CAPTCHA_SOLUTION_QUERY_ERRORS,
+  SOLUTION_QUERY_URL
 } from './constants';
 
 class RecaptchaV2SolveRequestApiError extends Error {
@@ -11,26 +13,46 @@ class RecaptchaV2SolveRequestApiError extends Error {
   }
 }
 
-class RecaptchaV2SolveRequestNetworkError extends Error {
+class RecaptchaV2ApiRequestNetworkError extends Error {
   public constructor(message: string) {
     super(message);
-    this.name = 'RecaptchaV2SolveRequestNetworkError';
+    this.name = 'RecaptchaV2ApiRequestNetworkError';
   }
 }
 
-class RecaptchaV2SolveRequestTimeoutError extends Error {
+class RecaptchaV2ApiRequestTimeoutError extends Error {
   public constructor(message?: string) {
     super(message);
-    this.name = 'RecaptchaV2SolveRequestTimeoutError';
+    this.name = 'RecaptchaV2ApiRequestTimeoutError';
   }
 }
 
-class RecaptchaV2SolveRequestSetupError extends Error {
+class RecaptchaV2ApiRequestSetupError extends Error {
   public constructor(message: string) {
     super(message);
-    this.name = 'RecaptchaV2SolveRequestSetupError';
+    this.name = 'RecaptchaV2ApiRequestSetupError';
   }
 }
+
+class RecaptchaV2SolutionQueryApiError extends Error {
+  public constructor(message: string) {
+    super(message);
+    this.name = 'RecaptchaV2SolutionQueryApiError';
+  }
+}
+
+const interpretRecaptchaV2ApiRequestError = (error: AxiosError) => {
+  if (error.response) {
+    const { status } = error.response;
+    throw new RecaptchaV2ApiRequestNetworkError(`${status}`);
+  }
+
+  if (error.request) {
+    throw new RecaptchaV2ApiRequestTimeoutError(error.message);
+  }
+
+  throw new RecaptchaV2ApiRequestSetupError(error.message);
+};
 
 const submitRecaptchaV2SolveRequest = (
   apiKey: string,
@@ -56,41 +78,63 @@ const submitRecaptchaV2SolveRequest = (
     const { status } = data;
 
     if (status === 0) {
-      const request = data.request as keyof typeof CAPTCHA_SOLVE_REQUEST_ERRORS;
-      const error = CAPTCHA_SOLVE_REQUEST_ERRORS[request];
+      const errorType = data.request as keyof typeof CAPTCHA_SOLVE_REQUEST_ERRORS;
+      const error = CAPTCHA_SOLVE_REQUEST_ERRORS[errorType];
 
       throw new RecaptchaV2SolveRequestApiError(error);
     }
 
-    const solveRequestKey = data.request;
+    const solveRequestId = data.request;
 
-    return solveRequestKey;
-  };
-
-  const interpretRequestError = (error: AxiosError) => {
-    if (error.response) {
-      const { status } = error.response;
-      throw new RecaptchaV2SolveRequestNetworkError(`${status}`);
-    }
-
-    if (error.request) {
-      throw new RecaptchaV2SolveRequestTimeoutError(error.message);
-    }
-
-    throw new RecaptchaV2SolveRequestSetupError(error.message);
+    return solveRequestId;
   };
 
   const url = `${SOLVE_REQUEST_URL}?${queryString}`;
   return axios
     .get(url)
-    .catch(interpretRequestError)
+    .catch(interpretRecaptchaV2ApiRequestError)
+    .then(interpretResponse);
+};
+
+const submitRecaptchaV2SolutionQuery = (
+  apiKey: string,
+  solveRequestId: string
+) => {
+  const queryString =
+    `key=${apiKey}&` +
+    `id=${solveRequestId}&` +
+    `action=get&` +
+    `json=1`;
+
+  const interpretResponse = (response: AxiosResponse) => {
+    const { data } = response;
+    const { status } = data;
+
+    if (status === 0) {
+      const errorType = data.request as keyof typeof CAPTCHA_SOLUTION_QUERY_ERRORS;
+      const error = CAPTCHA_SOLUTION_QUERY_ERRORS[errorType];
+
+      throw new RecaptchaV2SolutionQueryApiError(error);
+    }
+
+    const answerToken = data.request;
+
+    return answerToken;
+  };
+
+  const url = `${SOLUTION_QUERY_URL}?${queryString}`;
+  return axios
+    .get(url)
+    .catch(interpretRecaptchaV2ApiRequestError)
     .then(interpretResponse);
 };
 
 export {
   submitRecaptchaV2SolveRequest,
+  submitRecaptchaV2SolutionQuery,
   RecaptchaV2SolveRequestApiError,
-  RecaptchaV2SolveRequestNetworkError,
-  RecaptchaV2SolveRequestTimeoutError,
-  RecaptchaV2SolveRequestSetupError
+  RecaptchaV2ApiRequestNetworkError,
+  RecaptchaV2ApiRequestTimeoutError,
+  RecaptchaV2ApiRequestSetupError,
+  RecaptchaV2SolutionQueryApiError
 };
