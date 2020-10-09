@@ -2,13 +2,15 @@ import axios, { AxiosResponse, AxiosError } from 'axios';
 
 import {
   submitRecaptchaV2SolveRequest,
-  submitRecaptchaV2SolutionQuery,
+  submitRecaptchaV2SolutionQuery
+} from './service';
+import {
   RecaptchaV2SolveRequestApiError,
   RecaptchaV2ApiRequestNetworkError,
   RecaptchaV2ApiRequestTimeoutError,
   RecaptchaV2ApiRequestSetupError,
   RecaptchaV2SolutionQueryApiError
-} from './service';
+} from './errors';
 import {
   CAPTCHA_SOLVE_REQUEST_ERRORS,
   CAPTCHA_SOLUTION_QUERY_ERRORS
